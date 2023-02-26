@@ -235,7 +235,7 @@ function process_place_layer(node)
 		if population == "" then
 			population = "0"
 		end
-	elseif  place == "isolated_dwelling" or place == "farm"  then
+	elseif place == "isolated_dwelling" or place == "farm"  then
 		mz = 10
 		if population == "" then
 			population = "5"
@@ -259,7 +259,7 @@ function process_place_layer(node)
 		local populationNum = tonumber(population)
 		if populationNum ~= nil then
 			node:AttributeNumeric("population", populationNum)
-		        node:ZOrder(populationNum)
+			node:ZOrder(populationNum)
 		end
 	end
 end
@@ -304,13 +304,17 @@ function process_public_transport_layer(obj, is_area)
 	end
 	obj:MinZoom(11)
 	obj:Attribute("kind", kind)
+	local station = obj:Find("station")
+	if station ~= "" then
+		obj:Attribute("station", station)
+	end
 	local iata = obj:Find("iata")
 	if iata ~= "" then
 		obj:Attribute("iata", iata)
 	end
 	setNameAttributes(obj)
 end
-	
+
 
 function node_function(node)
 	-- Layer place_labels
@@ -1163,8 +1167,8 @@ function attribute_function(attr, layer)
 		attributes["name_single"] = attr["name_sngl"]
 		keys = {"name", "name_de", "name_en", "way_area", "land_area"}
 		for index, value in ipairs(keys) do
-				attributes[value] = attr[value]
-			end
+			attributes[value] = attr[value]
+		end
 		-- Fill with fallback values if empty
 		local name = attributes["name"]
 		local name_de = attributes["name_de"]
