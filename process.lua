@@ -993,7 +993,7 @@ function process_pois(obj, polygon)
 		addAttributeOrEmptyStr(obj, "denomination")
 	end
 	setNameAttributes(obj)
-	setAddressAttributes(obj)
+	-- setAddressAttributes(obj)
 	return true
 end
 
