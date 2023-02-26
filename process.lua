@@ -637,14 +637,23 @@ function process_streets(way)
 		name = way:Find("ref")
 	end
 	if highway ~= "" then
-		if highway == "motorway" or highway == "motorway_link" then
+		if highway == "motorway" then
 			mz = min_zoom_layer
 			kind = "motorway"
-		elseif highway == "trunk" or highway == "trunk_link" then
-			mz = 6
+		elseif highway == "motorway_link" then
+			mz = math.max(8, zmin_for_length(way, 0.25)) -- show link only on higher zoom
+			kind = "motorway"
+		elseif highway == "trunk" then
+			mz = 7
+			kind = "trunk"
+		elseif highway == "trunk_link" then
+			mz = math.max(8, zmin_for_length(way, 0.25)) -- show link only on higher zoom
 			kind = "trunk"
 		elseif highway == "primary" or highway == "primary_link" then
 			mz = 8
+			kind = "primary"
+		elseif highway == "primary" or highway == "primary_link" then
+			mz = 9
 			kind = "primary"
 		elseif highway == "secondary" or highway == "secondary_link" then
 			mz = 9
