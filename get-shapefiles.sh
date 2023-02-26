@@ -27,3 +27,6 @@ download_and_extract "https://osmdata.openstreetmap.de/download/simplified-water
 download_and_extract "https://shortbread.geofabrik.de/shapefiles/admin-points-4326.zip" "admin-points-4326.zip"
 mkdir -p data/simplified-water-polygons-split-4326
 transform_shp data/simplified-water-polygons-split-3857/simplified_water_polygons.shp data/simplified-water-polygons-split-4326/simplified_water_polygons.shp
+
+mkdir -p data/admin-points-4326
+ogr2ogr data/admin-points-4326/admin_points.shp versatiles/admin.geojson -lco ENCODING=UTF-8

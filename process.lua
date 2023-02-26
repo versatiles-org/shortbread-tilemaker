@@ -1134,26 +1134,22 @@ function attribute_function(attr, layer)
 	end
 	if layer == "boundary_labels" then
 		attributes = {}
-		attributes["admin_level"] = attr["admin_leve"]
-		if attributes["admin_level"] == nil then
-			attributes["admin_level"] = attr["ADMIN_LEVE"]
-		end
+		attributes["admin_level"] = attr["adm_level"]
 		attributes["admin_level"] = tonumber(attributes["admin_level"])
-		keys = {"name", "name_de", "name_en", "way_area"}
+		attributes["name_single"] = attr["name_sngl"]
+		keys = {"name", "name_de", "name_en", "way_area", "land_area"}
 		for index, value in ipairs(keys) do
-			if attr[value] == nil then
-				attributes[value] = attr[string.upper(value)]
-			else
 				attributes[value] = attr[value]
 			end
-		end
 		-- Fill with fallback values if empty
 		local name = attributes["name"]
 		local name_de = attributes["name_de"]
 		local name_en = attributes["name_en"]
+		local name_single = attributes["name_single"]
 		attributes["name"] = fillWithFallback(name, name_en, name_de)
 		attributes["name_de"] = fillWithFallback(name_de, name, name_en)
 		attributes["name_en"] = fillWithFallback(name_en, name, name_de)
+		attributes["name_single"] = fillWithFallback(name, name_en, name_de)
 		return attributes
 	end
 	return attr
