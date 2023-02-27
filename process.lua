@@ -668,10 +668,10 @@ function process_streets(way)
 		elseif highway == "trunk_link" then
 			mz = math.max(8, zmin_for_length(way, 0.25)) -- show link only on higher zoom
 			kind = "trunk"
-		elseif highway == "primary" or highway == "primary_link" then
+		elseif highway == "primary" then
 			mz = 8
 			kind = "primary"
-		elseif highway == "primary" or highway == "primary_link" then
+		elseif highway == "primary_link" then
 			mz = 9
 			kind = "primary"
 		elseif highway == "secondary" or highway == "secondary_link" then
