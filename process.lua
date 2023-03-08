@@ -315,7 +315,6 @@ function process_public_transport_layer(obj, is_area)
 	setNameAttributes(obj)
 end
 
-
 function node_function(node)
 	-- Layer place_labels
 	if node:Holds("place") and node:Holds("name") then
