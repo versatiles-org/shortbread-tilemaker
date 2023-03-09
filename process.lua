@@ -653,42 +653,40 @@ function process_streets(way)
 		name = way:Find("ref")
 	end
 	if highway ~= "" then
+		kind = highway
 		if highway == "motorway" then
 			mz = min_zoom_layer
-			kind = "motorway"
-		elseif highway == "motorway_link" then
-			mz = math.max(8, zmin_for_length(way, 0.25)) -- show link only on higher zoom
-			kind = "motorway"
 		elseif highway == "trunk" then
 			mz = 7
-			kind = "trunk"
-		elseif highway == "trunk_link" then
-			mz = math.max(8, zmin_for_length(way, 0.25)) -- show link only on higher zoom
-			kind = "trunk"
 		elseif highway == "primary" then
 			mz = 8
-			kind = "primary"
-		elseif highway == "primary_link" then
+		elseif highway == "secondary" then
 			mz = 9
-			kind = "primary"
-		elseif highway == "secondary" or highway == "secondary_link" then
-			mz = 9
-			kind = "secondary"
-		elseif highway == "tertiary" or highway == "tertiary_link" then
+		elseif highway == "tertiary" then
 			mz = 10
+		elseif highway == "motorway_link" then
+			mz = 9
+			kind = "motorway"
+		elseif highway == "trunk_link" then
+			mz = 10
+			kind = "trunk"
+		elseif highway == "primary_link" then
+			mz = 10
+			kind = "primary"
+		elseif highway == "secondary_link" then
+			mz = 11
+			kind = "secondary"
+		elseif highway == "tertiary_link" then
+			mz = 11
 			kind = "tertiary"
 		elseif highway == "unclassified" or highway == "residential" or highway == "bus_guideway" or highway == "busway" then
 			mz = 12
-			kind = highway
 		elseif highway == "living_street" or highway == "pedestrian" or highway == "track" then
 			mz = 13
-			kind = highway
 		elseif highway == "service" then
 			mz = 14
-			kind = highway
 		elseif highway == "footway" or highway == "steps" or highway == "path" or highway == "cycleway" then
 			mz = 13
-			kind = highway
 		end
 	elseif (railway == "rail" or railway == "narrow_gauge") and service == "" then
 		kind = railway
