@@ -1167,20 +1167,21 @@ function attribute_function(attr, layer)
 		attributes = {}
 		attributes["admin_level"] = attr["adm_level"]
 		attributes["admin_level"] = tonumber(attributes["admin_level"])
-		attributes["name_single"] = attr["name_sngl"]
-		keys = {"name", "name_de", "name_en", "way_area", "land_area"}
+		keys = {"name", "name_full", "name_en", "name_de", "way_area", "land_area"}
 		for index, value in ipairs(keys) do
 			attributes[value] = attr[value]
+		end
+		-- name_latin only if set
+		if attr["name_latin"] ~= nil and attr["name_latin"] ~= "" then
+			attributes["name_latin"] = attr["name_latin"]
 		end
 		-- Fill with fallback values if empty
 		local name = attributes["name"]
 		local name_de = attributes["name_de"]
 		local name_en = attributes["name_en"]
-		local name_single = attributes["name_single"]
 		attributes["name"] = fillWithFallback(name, name_en, name_de)
 		attributes["name_de"] = fillWithFallback(name_de, name, name_en)
 		attributes["name_en"] = fillWithFallback(name_en, name, name_de)
-		attributes["name_single"] = fillWithFallback(name, name_en, name_de)
 		return attributes
 	end
 	return attr
