@@ -1064,7 +1064,9 @@ function way_function(way)
 	end
 
 	-- Layer boundaries
-	process_boundary_lines(way)
+	if way:Holds("boundary") then
+		process_boundary_lines(way)
+	end
 
 	-- Layer streets, street_labels
 	if not is_area_default_linear and (way:Holds("highway") or way:Holds("railway") or way:Holds("aeroway")) then
