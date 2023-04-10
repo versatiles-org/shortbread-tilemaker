@@ -568,24 +568,30 @@ function process_boundary_lines(way)
 	end
 	local min_admin_level = 99
 	local disputedBool = false
-	while true do
-		local rel = way:NextRelation()
-		if not rel and min_admin_level == 99 then
-			return
-		elseif not rel then
-			break
-		end
-		local admin_level = way:FindInRelation("admin_level")
-		local boundary = way:FindInRelation("boundary")
-		local al = 99
-		if admin_level ~= nil and boundary == "administrative" then
-			al = tonumber(admin_level)
-		end
-		if al ~= nil and al >= 2 then
-			min_admin_level = math.min(min_admin_level, al)
-		end
-		if boundary == "disputed" then
-			disputedBool = true
+	if way:Find("boundary") == "disputed" then
+		disputedBool = true
+	elseif way:Find("disputed") == "yes" then
+		disputedBool = true
+	else
+		while true do
+			local rel = way:NextRelation()
+			if not rel and min_admin_level == 99 then
+				return
+			elseif not rel then
+				break
+			end
+			local admin_level = way:FindInRelation("admin_level")
+			local boundary = way:FindInRelation("boundary")
+			local al = 99
+			if admin_level ~= nil and boundary == "administrative" then
+				al = tonumber(admin_level)
+			end
+			if al ~= nil and al >= 2 then
+				min_admin_level = math.min(min_admin_level, al)
+			end
+			if boundary == "disputed" then
+				disputedBool = true
+			end
 		end
 	end
 
@@ -604,9 +610,6 @@ function process_boundary_lines(way)
 	local coastlineBool = false
 	if natural == "coastline" then
 		coastlineBool = true
-	end
-	if way:Find("disputed") == "yes" then
-		disputedBool = true
 	end
 	if mz < inf_zoom then
 		way:Layer("boundaries", false)
