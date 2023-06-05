@@ -1,4 +1,4 @@
-{ "type": "FeatureCollection", "name_latin":"","name_full": "admin_points", "crs": { "type": "name_latin":"","name_full", "properties": { "name_latin":"","name_full": "urn:ogc:def:crs:OGC:1.3:CRS84" } }, "features": [
+{"type":"FeatureCollection","name":"admin_points","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[
 {"type":"Feature","properties":{"adm_level":"2","way_area":9617539538,"name":"Россия","name_latin":"Russia","name_full":"Россия","name_en":"Russia","name_de":"Russland","land_area":16378410},"geometry":{"type":"Point","coordinates":[93.20832792193784,61.33099955]}},
 {"type":"Feature","properties":{"adm_level":"2","way_area":7360709706,"name":"Canada","name_latin":"","name_full":"Canada","name_en":"Canada","name_de":"Kanada","land_area":9093507},"geometry":{"type":"Point","coordinates":[-102.30222537163374,62.50633655]}},
 {"type":"Feature","properties":{"adm_level":"2","way_area":4262618566,"name":"Kalaallit Nunaat","name_latin":"","name_full":"Kalaallit Nunaat","name_en":"Greenland","name_de":"Grönland","land_area":2166086},"geometry":{"type":"Point","coordinates":[-38.83977521933279,71.7919151]}},
