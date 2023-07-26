@@ -688,7 +688,7 @@ function process_streets(way)
 			mz = 13
 		elseif highway == "service" then
 			mz = 14
-		elseif highway == "footway" or highway == "steps" or highway == "path" or highway == "cycleway" then
+		elseif highway == "footway" or highway == "steps" or highway == "path" or highway == "cycleway" or highway == "bridleway" then
 			mz = 13
 		end
 	elseif (railway == "rail" or railway == "narrow_gauge") and service == "" then
@@ -807,7 +807,7 @@ function process_street_labels(way)
 		mz = 14
 		kind = "tertiary"
 		link = true
-	elseif highway == "unclassified" or highway == "residential" or highway == "busway" or highway == "bus_guideway" or highway == "living_street" or highway == "pedestrian" or highway == "track" or highway == "service" or highway == "footway" or highway == "steps" or highway == "path" or highway == "cycleway" then
+	elseif highway == "unclassified" or highway == "residential" or highway == "busway" or highway == "bus_guideway" or highway == "living_street" or highway == "pedestrian" or highway == "track" or highway == "service" or highway == "footway" or highway == "steps" or highway == "path" or highway == "cycleway" or highway == "bridleway" then
 		mz = 14
 		kind = highway
 	end
