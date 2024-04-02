@@ -308,7 +308,7 @@ function process_public_transport_layer(is_area)
 	if station ~= "" then
 		Attribute("station", station)
 	end
-	local iata = obj:Find("iata")
+	local iata = Find("iata")
 	if iata ~= "" then
 		Attribute("iata", iata)
 	end
