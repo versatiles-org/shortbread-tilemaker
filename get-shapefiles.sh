@@ -14,6 +14,7 @@ function download_and_extract {
 	fi
     curl --time-cond "$CURL_TIME_COND_ARG" -LO "$URL"
     unzip -o -u "$FILE"
+    rm "$FILE"
     cd "$START_DIR"
 }
 
@@ -26,8 +27,12 @@ function transform_shp {
 cd "$(dirname "$0")" || exit
 
 mkdir -p data
+
 download_and_extract "https://osmdata.openstreetmap.de/download/water-polygons-split-4326.zip" "water-polygons-split-4326.zip"
+
 download_and_extract "https://osmdata.openstreetmap.de/download/simplified-water-polygons-split-3857.zip" "simplified-water-polygons-split-3857.zip"
-download_and_extract "https://shortbread-tiles.org/shapefiles/admin-points-4326.zip" "admin-points-4326.zip"
 mkdir -p data/simplified-water-polygons-split-4326
 transform_shp data/simplified-water-polygons-split-3857/simplified_water_polygons.shp data/simplified-water-polygons-split-4326/simplified_water_polygons.shp
+rm -r data/simplified-water-polygons-split-3857
+
+download_and_extract "https://shortbread-tiles.org/shapefiles/admin-points-4326.zip" "admin-points-4326.zip"
