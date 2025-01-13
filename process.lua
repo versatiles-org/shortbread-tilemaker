@@ -201,42 +201,42 @@ function process_place_layer()
 			population = "100000"
 		end
 	elseif place == "town" then
-		mz = 7
+		mz = 8
 		if population == "" then
 			population = "5000"
 		end
 	elseif place == "village" then
-		mz = 10
+		mz = 11
 		if population == "" then
 			population = "100"
 		end
 	elseif place == "hamlet" then
-		mz = 10
+		mz = 13
 		if population == "" then
 			population = "50"
 		end
 	elseif place == "suburb" then
-		mz = 10
+		mz = 11
 		if population == "" then
 			population = "1000"
 		end
 	elseif place == "quarter" then
-		mz = 10
+		mz = 11
 		if population == "" then
 			population = "500"
 		end
 	elseif place == "neighbourhood" then
-		mz = 10
+		mz = 11
 		if population == "" then
 			population = "100"
 		end
 	elseif place == "locality" or place == "island" then
-		mz = 10
+		mz = 14
 		if population == "" then
 			population = "0"
 		end
 	elseif place == "isolated_dwelling" or place == "farm" then
-		mz = 10
+		mz = 14
 		if population == "" then
 			population = "5"
 		end
@@ -306,7 +306,7 @@ function process_public_transport_layer(is_area)
 	else
 		Layer("public_transport", false)
 	end
-	MinZoom(11)
+	MinZoom(mz)
 	Attribute("kind", kind)
 	local iata = Find("iata")
 	if iata ~= "" then
@@ -388,23 +388,26 @@ function process_water_polygons(way_area)
 	local kind = ""
 	local is_river = (natural == "water" and water == "river") or waterway == "riverbank"
 	if landuse == "reservoir" or landuse == "basin" or (natural == "water" and not is_river) or natural == "glacier" then
-		mz = math.max(4, zmin_for_area(0.01, way_area))
+		mz = math.max(4, zmin_for_area(3, way_area))
 		if mz >= 10 then
-			mz = math.max(10, zmin_for_area(0.1, way_area))
+			mz = math.max(10, zmin_for_area(3, way_area))
 		end
 		if landuse == "reservoir" or landuse == "basin" then
 			kind = landuse
 		elseif natural == "water" or natural == "glacier" then
 			kind = natural
 		end
-	elseif is_river or waterway == "dock" or waterway == "canal" then
-		mz = math.max(4, zmin_for_area(0.1, way_area))
+	elseif waterway == "dock" or waterway == "canal" then
+		mz = math.max(9, zmin_for_area(6, way_area))
 		kind = waterway
-                if is_river then
-			kind = "river"
-		end
-	end
+	elseif is_river then
+        mz = math.max(6, zmin_for_area(80, way_area))
+        kind = "river"
+    end
 	if mz < inf_zoom then
+        if mz > 14 then
+            mz = 14
+        end
 		local way_area = way_area
 		Layer("water_polygons", true)
 		MinZoom(mz)
@@ -428,9 +431,14 @@ function process_water_lines()
 	local mz_label = inf_zoom
 	-- skip if area > 0 (it's no line then)
 	mz = inf_zoom
-	if kind == "river" or kind == "canal" then
-		mz = math.max(9, zmin_for_length(0.25))
-		mz_label = math.max(13, zmin_for_length(0.25))
+    if kind == "river" then
+        if Holds("name") then
+		    mz = math.max(5, zmin_for_length(4))
+		    mz_label = math.max(13, zmin_for_length(4))
+        else 
+            mz = math.max(9, zmin_for_length(2))
+            mz_label = math.max(13, zmin_for_length(2))
+        end
 	elseif kind == "canal" then
 		mz = 12
 		mz_label = 14
@@ -442,6 +450,9 @@ function process_water_lines()
 		mz_label = 14
 	end
 	if mz < inf_zoom then
+        if mz > 14 then
+            mz = 14
+        end
 		local tunnel = toTunnelBool(Find("tunnel"), Find("covered"))
 		local bridge = toBridgeBool(Find("bridge"))
 		local layer = layerNumeric()
@@ -490,45 +501,48 @@ function process_pier_polygons()
 	end
 end
 
-function process_land()
+function process_land(way_area)
 	local landuse = Find("landuse")
 	local natural = Find("natural")
 	local wetland = Find("wetland")
 	local leisure = Find("leisure")
 	local kind = ""
 	local mz = inf_zoom
-	if landuse == "forest" or natural == "wood" then
+	if landuse == "forest" or natural == "wood"  then
 		kind = "forest"
-		mz = 7
+		mz = math.max(7, zmin_for_area(8, way_area))
 	elseif landuse == "residential" or landuse == "industrial" or landuse == "commercial" or landuse == "retail" or landuse == "railway" or landuse == "landfill" or landuse == "brownfield" or landuse == "greenfield" or landuse == "farmyard" or landuse == "farmland" then
 		kind = landuse
-		mz = 10
+		mz = math.max(10, zmin_for_area(8, way_area))
 	elseif landuse == "grass" or landuse == "meadow" or landuse == "orchard" or landuse == "vineyard" or landuse == "allotments" or landuse == "village_green" or landuse == "recreation_ground" or landuse == "greenhouse_horticulture" or landuse == "plant_nursery" or landuse == "quarry" then
 		kind = landuse
-		mz = 11
+		mz = math.max(11, zmin_for_area(8, way_area))
 	elseif natural == "sand" or natural == "beach" then
 		kind = natural
-		mz = 10
+		mz = math.max(10, zmin_for_area(8, way_area))
 	elseif natural == "wood" or natural == "heath" or natural == "scrub" or natural == "grassland" or natural == "bare_rock" or natural == "scree" or natural == "shingle" or natural == "sand" or natural == "beach" then
 		kind = natural
-		mz = 11
+		mz = math.max(10, zmin_for_area(8, way_area))
 	elseif wetland == "swamp" or wetland == "bog" or wetland == "string_bog" or wetland == "wet_meadow" or wetland == "marsh" then
 		kind = wetland
-		mz = 11
+		mz = math.max(8, zmin_for_area(8, way_area))
 	elseif Find("amenity") == "grave_yard" then
 		kind = "grave_yard"
-		mz = 13
+		mz = math.max(13, zmin_for_area(8, way_area))
 	elseif landuse == "garages" then
 		kind = landuse
-		mz = 12
+		mz = math.max(12, zmin_for_area(8, way_area))
 	elseif leisure == "golf_course" or leisure == "park" or leisure == "garden" or leisure == "playground" or leisure == "miniature_golf" then
 		kind = leisure
-		mz = 11
+		mz = math.max(11, zmin_for_area(8, way_area))
 	elseif landuse == "cemetery" then
 		kind = "cemetery"
-		mz = 13
+		mz = math.max(13, zmin_for_area(8, way_area))
 	end
 	if mz < inf_zoom then
+		if mz > 14 then
+			mz = 14
+		end
 		Layer("land", true)
 		MinZoom(mz)
 		Attribute("kind", kind)
@@ -1043,7 +1057,7 @@ function way_function()
 
 	-- Layer land
 	if is_area and (Holds("landuse") or Holds("natural") or Holds("wetland") or Find("amenity") == "grave_yard" or Holds("leisure")) then
-		process_land()
+		process_land(area)
 	end
 
 	-- Layer sites
