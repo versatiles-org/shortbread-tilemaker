@@ -10,6 +10,16 @@ function exit_function()
 end
 
 node_keys = { "place", "highway", "railway", "aeroway", "amenity", "aerialway", "shop", "leisure", "tourism", "man_made", "historic", "emergency", "office", "addr:housenumber", "addr:housename" }
+langs = {"ar","de","el","en","es","fr","it","nl","pl","pt","uk"}
+
+-- Precompute boundary label attribute keys once for performance
+boundary_label_keys = (function()
+	local t = {"way_area", "name"}
+	for _, lang in ipairs(langs) do
+		table.insert(t, "name_" .. lang)
+	end
+	return t
+end)()
 
 -- Management of accepted key-value pairs for the "pois" layer.
 -- We write only whitelisted tags to the shape file.
@@ -69,24 +79,22 @@ poi_office_values = Set { "diplomatic" }
 
 inf_zoom = 99
 
-function fillWithFallback(value1, value2, value3)
+function fillWithFallback(value1, value2)
 	if value1 ~= "" then
 		return value1
 	end
-	if value2 ~= "" then
-		return value2
-	end
-	return value3
+	return value2
 end
 
 -- Set name, name_en, and name_de on any object
 function setNameAttributes()
-	local name = Find("name")
-	local name_de = Find("name:de")
-	local name_en = Find("name:en")
-	Attribute("name", fillWithFallback(name, name_en, name_de))
-	Attribute("name_de", fillWithFallback(name_de, name, name_en))
-	Attribute("name_en", fillWithFallback(name_en, name, name_de))
+	-- Base name keeps a pragmatic fallback order: local name, then English
+	Attribute("name", fillWithFallback(Find("name"), Find("name:en")))
+
+	-- Emit explicit localized names without fallback (empty string if missing)
+	for _, lang in ipairs(langs) do
+		Attribute("name_" .. lang, Find("name:" .. lang))
+	end
 end
 
 -- Return true if way is oneway
@@ -1176,7 +1184,9 @@ function attribute_function(attr, layer)
 			attributes["admin_level"] = attr["ADMIN_LEVE"]
 		end
 		attributes["admin_level"] = tonumber(attributes["admin_level"])
-		keys = {"name", "name_de", "name_en", "way_area"}
+
+		local keys = boundary_label_keys
+		
 		for index, value in ipairs(keys) do
 			if attr[value] == nil then
 				attributes[value] = attr[string.upper(value)]
@@ -1184,13 +1194,10 @@ function attribute_function(attr, layer)
 				attributes[value] = attr[value]
 			end
 		end
-		-- Fill with fallback values if empty
-		local name = attributes["name"]
-		local name_de = attributes["name_de"]
-		local name_en = attributes["name_en"]
-		attributes["name"] = fillWithFallback(name, name_en, name_de)
-		attributes["name_de"] = fillWithFallback(name_de, name, name_en)
-		attributes["name_en"] = fillWithFallback(name_en, name, name_de)
+
+		-- Fill the base name with fallbacks
+		attributes["name"] = fillWithFallback(attributes["name"], attributes["name_en"])
+
 		return attributes
 	end
 	return attr
