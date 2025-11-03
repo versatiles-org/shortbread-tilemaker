@@ -3,8 +3,8 @@
 This Git repository contains the Tilemaker configuration files in order to produce
 vector tiles in the Shortbread schema.
 
-* [Instructions](https://shortbread.geofabrik.de/make-vectortiles/)
-* [Schema documentation](https://shortbread.geofabrik.de/schema/)
+* [Instructions](https://shortbread-tiles.org/make-vectortiles/)
+* [Schema documentation](https://shortbread-tiles.org/schema/)
 
 ## Authors
 
