@@ -10,7 +10,7 @@ function exit_function()
 end
 
 node_keys = { "place", "highway", "railway", "aeroway", "amenity", "aerialway", "shop", "leisure", "tourism", "man_made", "historic", "emergency", "office", "addr:housenumber", "addr:housename" }
-langs = {"ar","de","el","en","es","fr","it","nl","pl","pt","uk"}
+langs = {"en","fr","es","de","ar","el","it","nl","pl","pt","uk"}
 
 -- Precompute boundary label attribute keys once for performance
 boundary_label_keys = (function()
@@ -79,21 +79,22 @@ poi_office_values = Set { "diplomatic" }
 
 inf_zoom = 99
 
-function fillWithFallback(value1, value2)
-	if value1 ~= "" then
-		return value1
-	end
-	return value2
-end
-
 -- Set name, name_en, and name_de on any object
 function setNameAttributes()
-	-- Base name keeps a pragmatic fallback order: local name, then English
-	Attribute("name", fillWithFallback(Find("name"), Find("name:en")))
-
-	-- Emit explicit localized names without fallback (empty string if missing)
+	local name = Find("name")
+	
 	for _, lang in ipairs(langs) do
-		Attribute("name_" .. lang, Find("name:" .. lang))
+		local localName = Find("name:" .. lang)
+		if localName ~= "" then
+			Attribute("name_" .. lang, localName)
+			if name == "" then
+				name = localName
+			end
+		end
+	end
+
+	if name ~= "" then
+		Attribute("name", name)
 	end
 end
 
@@ -1185,18 +1186,21 @@ function attribute_function(attr, layer)
 		end
 		attributes["admin_level"] = tonumber(attributes["admin_level"])
 
-		local keys = boundary_label_keys
-		
-		for index, value in ipairs(keys) do
-			if attr[value] == nil then
-				attributes[value] = attr[string.upper(value)]
-			else
-				attributes[value] = attr[value]
+		for _, key in ipairs(boundary_label_keys) do
+			local value = attr[key]
+			if value == nil then
+				value = attr[string.upper(key)]
+			end
+			if value ~= nil then
+				attributes[key] = value
 			end
 		end
 
 		-- Fill the base name with fallbacks
-		attributes["name"] = fillWithFallback(attributes["name"], attributes["name_en"])
+		local name = attributes["name"]
+		if name == nil or name == "" then
+			attributes["name"] = attributes["name_en"]
+		end
 
 		return attributes
 	end
