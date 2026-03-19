@@ -87,7 +87,10 @@ else
   start_postgres
 
   mkdir -p "$OUTPUT_DIR"
-  cat > /tmp/export.sql <<'EOSQL'
+
+  # Create a view to avoid quoting issues with pgsql2shp
+  su postgres -c "psql -d adminpolygons -f -" <<'EOSQL'
+CREATE OR REPLACE VIEW admin_export AS
 SELECT
   admin_level AS admin_leve,
   name,
@@ -110,13 +113,8 @@ WHERE osm_id < 0
   AND admin_level IN ('2', '4')
 ORDER BY way_area DESC;
 EOSQL
-  cat > /tmp/run_export.sh <<'EOSH'
-#!/bin/bash
-SQL=$(cat /tmp/export.sql)
-pgsql2shp -f /tmp/admin_points.shp adminpolygons "$SQL"
-EOSH
-  chmod +x /tmp/run_export.sh
-  su postgres -c /tmp/run_export.sh
+
+  su postgres -c "pgsql2shp -f /tmp/admin_points.shp adminpolygons admin_export"
 
   cp /tmp/admin_points.{shp,shx,dbf,prj} "$OUTPUT_DIR/"
   echo "UTF-8" > "$OUTPUT_DIR/admin_points.cpg"
