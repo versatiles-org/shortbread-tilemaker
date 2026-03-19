@@ -110,7 +110,13 @@ WHERE osm_id < 0
   AND admin_level IN ('2', '4')
 ORDER BY way_area DESC;
 EOSQL
-  su postgres -c "pgsql2shp -f /tmp/admin_points.shp adminpolygons \"$(cat /tmp/export.sql)\""
+  cat > /tmp/run_export.sh <<'EOSH'
+#!/bin/bash
+SQL=$(cat /tmp/export.sql)
+pgsql2shp -f /tmp/admin_points.shp adminpolygons "$SQL"
+EOSH
+  chmod +x /tmp/run_export.sh
+  su postgres -c /tmp/run_export.sh
 
   cp /tmp/admin_points.{shp,shx,dbf,prj} "$OUTPUT_DIR/"
   echo "UTF-8" > "$OUTPUT_DIR/admin_points.cpg"
