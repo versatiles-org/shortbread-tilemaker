@@ -1,6 +1,7 @@
 FROM postgis/postgis:17-3.5
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    aria2 \
     osm2pgsql \
     osmium-tool \
   && rm -rf /var/lib/apt/lists/*

@@ -28,7 +28,7 @@ The shape file must contain features with `admin_level=2` and `admin_level=4` on
 
 ## Create Shape File using Docker
 
-A Docker image in `admin-points/` bundles PostgreSQL, PostGIS, osm2pgsql, and Osmium to generate the shapefile in a single step.
+A Docker image in `admin-points/` bundles PostgreSQL, PostGIS, osm2pgsql, Osmium, and aria2 to generate the shapefile. It automatically downloads the planet PBF via torrent and supports resuming interrupted runs.
 
 ### Build the image
 
@@ -38,13 +38,40 @@ docker build -t admin-points admin-points/
 
 ### Run
 
-Mount the planet PBF file and an output directory:
+Mount a data directory for downloads, intermediate files, and output:
 
 ```sh
-docker run --rm \
-  -v /path/to/planet-latest.osm.pbf:/data/planet-latest.osm.pbf:ro \
-  -v ./data/admin-points-4326:/data/admin-points-4326 \
-  admin-points
+docker run --rm -v /path/to/data:/data admin-points
 ```
 
-The shapefile will be written to `data/admin-points-4326/admin_points.shp`.
+The pipeline will:
+
+1. Download the planet PBF via torrent (aria2)
+2. Filter for admin boundaries (osmium)
+3. Import into PostgreSQL (osm2pgsql)
+4. Export the shapefile (pgsql2shp)
+5. Clean up intermediate files (~70 GB freed)
+
+The shapefile will be written to `/path/to/data/admin-points-4326/admin_points.shp`.
+
+### Resuming interrupted runs
+
+The pipeline is idempotent. Each step records a marker file on completion. If the container is interrupted, simply rerun the same command — completed steps will be skipped automatically.
+
+To force a step to rerun, delete its marker file in `/path/to/data/.markers/` (e.g. `step3_import`).
+
+### Testing with an existing PBF
+
+To skip the torrent download and use your own PBF:
+
+```sh
+# Place your PBF file
+cp my-extract.osm.pbf /path/to/data/planet-latest.osm.pbf
+
+# Create the download marker so step 1 is skipped
+mkdir -p /path/to/data/.markers
+date -Iseconds > /path/to/data/.markers/step1_download
+
+# Run
+docker run --rm -v /path/to/data:/data admin-points
+```
