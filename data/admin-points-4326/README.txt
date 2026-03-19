@@ -1,7 +1,8 @@
 This data is used as supplementary data to create vector tiles in
 the Shortbread vector tile schema.
 
-See boundary_labels_shape_file.md for how to regenerate this data.
+See ../Dockerfile and ../boundary_labels_shape_file.md for how to
+regenerate this data.
 
 
 PACKAGE CONTENT

@@ -28,12 +28,14 @@ The shape file must contain features with `admin_level=2` and `admin_level=4` on
 
 ## Create Shape File using Docker
 
-A Docker image in `admin-points/` bundles PostgreSQL, PostGIS, osm2pgsql, Osmium, and aria2 to generate the shapefile. It automatically downloads the planet PBF via torrent and supports resuming interrupted runs.
+The `Dockerfile` in this directory bundles PostgreSQL, PostGIS, osm2pgsql, Osmium, and aria2 to generate the shapefile. It automatically downloads the planet PBF via torrent and supports resuming interrupted runs.
 
 ### Build the image
 
+From the repository root:
+
 ```sh
-docker build -t admin-points admin-points/
+docker build -t admin-points data/
 ```
 
 ### Run
