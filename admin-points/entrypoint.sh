@@ -75,7 +75,7 @@ else
     su postgres -c "psql -d adminpolygons -c 'CREATE EXTENSION hstore;'"
   fi
 
-  su postgres -c "osm2pgsql -d adminpolygons --hstore --multi-geometry --latlong $FILTERED_PBF"
+  su postgres -c "osm2pgsql -d adminpolygons -s --hstore --multi-geometry --latlong $FILTERED_PBF"
   mark_done step3_import
 fi
 
