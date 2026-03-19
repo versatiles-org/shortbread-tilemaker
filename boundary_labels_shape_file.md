@@ -41,7 +41,7 @@ docker build -t admin-points admin-points/
 Mount a data directory for downloads, intermediate files, and output:
 
 ```sh
-docker run --rm -v /path/to/data:/data admin-points
+docker run -it --rm -v /path/to/data:/data admin-points
 ```
 
 The pipeline will:
